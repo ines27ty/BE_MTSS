@@ -83,18 +83,5 @@ def interpolate_lists(x1, y1, x2, y2, num_points=500):
     y1_interp = interp1(x_common)
     y2_interp = interp2(x_common)
 
-    # Tracer les résultats
-    plt.figure(0)
-    plt.plot(x1, y1, 'o-', label="Données 1 (originales)")
-    plt.plot(x2, y2, 'o-', label="Données 2 (originales)")
-    plt.plot(x_common, y1_interp, '-', label="Données 1 (interpolées)")
-    plt.plot(x_common, y2_interp, '-', label="Données 2 (interpolées)")
-    plt.legend()
-    plt.title("Interpolation des données")
-    plt.xlabel("Abscisse (x)")
-    plt.ylabel("Ordonnée (y)")
-    plt.grid(True)
-    #plt.show()
-
     return x_common, y1_interp, y2_interp
 
