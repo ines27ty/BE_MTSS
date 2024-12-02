@@ -1,6 +1,8 @@
-import numpy as np
 import os
+import csv
+import numpy as np
 import pandas as pd
+
 def lecture_exp(filename, coeff_1, coeff_2):
     if not os.path.exists(filename):
         raise FileNotFoundError(f"Le fichier {filename} n'existe pas.")
@@ -83,3 +85,73 @@ def sort(x, y):
     sort_x = df_sorted['x']
     sort_y = df_sorted['y']
     return sort_x, sort_y
+
+
+
+def lecture_starccm_double(filename, add_x1, factor_x1, add_y1, factor_y1, add_x2, factor_x2, add_y2, factor_y2):
+    # Vérifier si le fichier existe
+    if not os.path.exists(filename):
+        raise FileNotFoundError(f"Le fichier {filename} n'existe pas.")
+
+    x1, y1, x2, y2 = [], [], [], []
+
+    # Lecture du fichier CSV
+    with open(filename, 'r') as fichier:
+        reader = csv.reader(fichier)  # Utilise le module CSV pour lire les lignes
+        for row in reader:
+            if not row:  # Ignorer les lignes vides
+                continue
+            try:
+                # Convertir les valeurs en flottants
+                x1.append(float(row[0]))
+                y1.append(float(row[1]))
+                x2.append(float(row[2]))
+                y2.append(float(row[3]))
+
+            except ValueError as e:
+                raise ValueError(f"Valeurs non numériques détectées dans la ligne : {row}") from e
+
+    # Convertir les listes en tableaux numpy
+    x1 = np.array(x1) + add_x1
+    y1 = np.array(y1)
+    x1_adim = x1 * factor_x1
+    y1_adim = y1 * factor_y1
+
+    x2 = np.array(x2) + add_x2
+    y2 = np.array(y2)
+    x2_adim = x2 * factor_x2
+    y2_adim = y2 * factor_y2
+
+    return x1, y1, x1_adim, y1_adim, x2, y2, x2_adim, y2_adim
+
+
+
+
+def lecture_starccm_single(filename, add_x1, factor_x1, add_y1, factor_y1):
+    # Vérifier si le fichier existe
+    if not os.path.exists(filename):
+        raise FileNotFoundError(f"Le fichier {filename} n'existe pas.")
+
+    x1, y1= [], []
+
+    # Lecture du fichier CSV
+    with open(filename, 'r') as fichier:
+        reader = csv.reader(fichier)  # Utilise le module CSV pour lire les lignes
+        for row in reader:
+            if not row:  # Ignorer les lignes vides
+                continue
+            try:
+                # Convertir les valeurs en flottants
+                x1.append(float(row[0]))
+                y1.append(float(row[1]))
+
+            except ValueError as e:
+                raise ValueError(f"Valeurs non numériques détectées dans la ligne : {row}") from e
+
+    # Convertir les listes en tableaux numpy
+    x1 = np.array(x1) + add_x1
+    y1 = np.array(y1)
+    x1_adim = x1 * factor_x1
+    y1_adim = y1 * factor_y1
+
+    return x1, y1, x1_adim, y1_adim

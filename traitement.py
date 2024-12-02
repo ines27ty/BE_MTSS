@@ -4,6 +4,8 @@ import os
 from lecture import lecture_exp         # entrée : filename, coeff_1, coeff_2 / sortie :  x, y, x_adim, y_adim
 from lecture import lecture_simu        # entrée : filename, add_x,factor_x, add_y, factor_y / sortie : x, y, x_dim, y_dim
 from lecture import sort
+from lecture import lecture_starccm_single
+from lecture import lecture_starccm_double
 from interpolation import interpolate_files 
 from interpolation import interpolate_lists
 
@@ -23,15 +25,28 @@ position_mu_adim_30, u_mean_adim_30, position_mu_dim_30 , u_mean_dim_30 = lectur
 position_mu_fluent_dim_10, u_mean_fluent_dim_10, position_mu_fluent_adim_10 , u_mean_fluent_adim_10 = lecture_simu('umean_r_1.xy', 0.208, 1/D, 0, 1/u_bulk)
 position_mu_fluent_dim_30, u_mean_fluent_dim_30, position_mu_fluent_adim_30 , u_mean_fluent_adim_30 = lecture_simu('umean_r_3.xy', 0.208, 1/D, 0, 1/u_bulk)
 
-
 position_mu_fluent_adim_10, u_mean_fluent_adim_10 = sort(position_mu_fluent_adim_10, u_mean_fluent_adim_10)
 position_mu_fluent_adim_30, u_mean_fluent_adim_30 = sort(position_mu_fluent_adim_30, u_mean_fluent_adim_30)
 
+# Starccm : velocity_magnitude.csv
+# "Line Probe: Direction [-1,0,0] (m)","Line Probe: Velocity: Magnitude (m/s)","Line Probe 2: Direction [-1,0,0] (m)","Line Probe 2: Velocity: Magnitude (m/s)"
+
+position_mu_star_dim_10, u_mean_star_dim_10, position_mu_star_adim_10 , u_mean_star_adim_10, position_mu_star_dim_30, u_mean_star_dim_30, position_mu_star_adim_30 , u_mean_star_adim_30= lecture_starccm_double('velocity_magnitude.csv', \
+                                                                                    0.208, 1/D, 0, 1/u_bulk, 0.208, 1/D, 0, 1/u_bulk)
+
+position_mu_star_adim_10, u_mean_star_adim_10 = sort(position_mu_star_adim_10, u_mean_star_adim_10)
+position_mu_star_adim_30, u_mean_star_adim_30 = sort(position_mu_star_adim_30, u_mean_star_adim_30)
+position_mu_star_dim_10, u_mean_star_dim_10 = sort(position_mu_star_dim_10, u_mean_star_dim_10)
+position_mu_star_dim_30, u_mean_star_dim_30 = sort(position_mu_star_dim_30, u_mean_star_dim_30)
+
+
 plt.figure(2)
 plt.plot(position_mu_adim_10, u_mean_adim_10, 'o-', label="r/D = 1.0 exp")
-plt.plot(position_mu_fluent_adim_10[:70], u_mean_fluent_adim_10[:70], 'o-', label="r/D = 1.0 Fluent")
+plt.plot(position_mu_fluent_adim_10[:70], u_mean_fluent_adim_10[:70], '*-', label="r/D = 1.0 Fluent")
+plt.plot(position_mu_star_adim_10[:40], u_mean_star_adim_10[:40], '*-', label="r/D = 1.0 Starccm")
 plt.plot(position_mu_adim_30, u_mean_adim_30, 'o-', label="r/D = 3.0 exp")
-plt.plot(position_mu_fluent_adim_30[:70], u_mean_fluent_adim_30[:70], 'o-', label="r/D = 3.0 Fluent")
+plt.plot(position_mu_fluent_adim_30[:70], u_mean_fluent_adim_30[:70], '*-', label="r/D = 3.0 Fluent")
+plt.plot(position_mu_star_adim_30[:40], u_mean_star_adim_30[:40], '*-', label="r/D = 3.0 Starccm")
 plt.xlabel("Position y/D")
 plt.ylabel("vitesse u/UBULK")
 plt.title("Vitesse moyenne adimensionnalisé")
@@ -102,7 +117,7 @@ plt.savefig("comp_k_dim.png")
 
 print(len(position_k_fluent_dim_30))
 
-plt.figure(4)
+plt.figure(5)
 plt.plot(position_inter_10/D, np.sqrt(k_dim_10)/u_bulk, 'o-', label="r/D = 1.0")
 plt.plot(position_k_fluent_dim_10/D, np.sqrt(k_fluent_dim_10)/u_bulk, 'o-', label="r/D = 1.0 Fluent")
 plt.plot(position_inter_30/D, np.sqrt(k_dim_30)/u_bulk, 'o-', label="r/D = 3.0")
@@ -124,26 +139,33 @@ plt.savefig("comp_k_adim_exp.png")
 position_Nu_exp_adim, Nu_exp_adim, position_Nu_exp_dim, Nu_exp_dim = lecture_exp('ij2lr-nuss.dat', D, Re**0.7)
 
 # Fluent
-position_heat, heat,position_heat_adim, heat_adim = lecture_simu('heat_flux.xy', 0, 1/D, 0, 1)
+position_fluent_heat, heat_fluent,position_fluent_heat_adim, heat_fluent_adim = lecture_simu('heat_flux.xy', 0, 1/D, 0, 1)
 
-position_Nu_dim, heat = sort(position_heat, heat) 
-position_Nu_adim = position_Nu_dim/D
+position_Nu_dim_fluent, heat_fluent = sort(position_fluent_heat, heat_fluent) 
+position_Nu_adim_fluent = position_Nu_dim_fluent/D
+h_fluent = heat_fluent/DeltaT
+Nu_fluent = h_fluent*D/lambda_air
 
-h = heat/DeltaT
-Nu_fluent = h*D/lambda_air
+# Starccm
+#"fluid: CF: Direction [0,1,0] (m)","fluid: CF: Boundary Heat Flux (W/m^2)"
 
+position_star_heat, heat_star, position_star_heat_adim, heat_star_adim = lecture_starccm_single('heat_flux.csv', 0, 1/D, 0, 1)
+
+position_Nu_dim_star, heat_star = sort(position_star_heat, heat_star)
+position_Nu_adim_star = position_Nu_dim_star/D
+h_star = heat_star/DeltaT
+Nu_star = h_star*D/lambda_air
 
 plt.figure(6)
 plt.plot(position_Nu_exp_adim, Nu_exp_adim, 'o-', label="exp")
-plt.plot(position_Nu_adim[:125] ,Nu_fluent[:125]/(Re**0.7), 'o-', label="fluent")
+plt.plot(position_Nu_adim_fluent[:125] ,Nu_fluent[:125]/(Re**0.7), 'o-', label="fluent")
+plt.plot(position_Nu_adim_star[:125], Nu_star[:125]/(Re**0.7), 'o-', label="starccm")
 plt.xlabel("Position R/D")
 plt.ylabel(" Nu/(Re**0.7)")
 plt.title("Profil de Nu adimensionné en fonction de la position adimensionnée")
 plt.grid()
 plt.legend()
 plt.savefig("comp_nu_adim.png")
-
-print(len(position_Nu_adim))
 #############################################################
 plt.show()
 
