@@ -44,30 +44,29 @@ def lecture_simu(filename, add_x,factor_x, add_y, factor_y) :
     if not os.path.exists(filename):
         raise FileNotFoundError(f"Le fichier {filename} n'existe pas.")
 
+    """
+    Lit un fichier contenant deux colonnes de données numériques.
+    
+    :param fichier: Chemin vers le fichier à lire.
+    :return: Deux listes, x et y, contenant les valeurs des colonnes.
+    """
     x = []
     y = []
-
-    with open(filename, 'r') as fichier:
-        lines = fichier.readlines()
-
-    for line in lines:
-        line = line.strip()  # Remove leading/trailing spaces
-        if not line:  # Skip empty lines
-            continue
-
-        # Split the line into values
-        values = line.split()
-        if len(values) < 2:  # Ensure at least two values are present
-            raise ValueError(f"Ligne invalide : {line}")
-        
-        try:
-            x_value = float(values[0])
-            y_value = float(values[1])
-        except ValueError:
-            raise ValueError(f"Valeurs non numériques détectées dans la ligne : {line}")
-
-        x.append(x_value)
-        y.append(y_value)
+    
+    with open(filename, 'r') as f:
+        for ligne in f:
+            ligne = ligne.strip()  # Retirer les espaces ou caractères inutiles
+            if not ligne:  # Ignorer les lignes vides
+                continue
+            
+            valeurs = ligne.split()  # Diviser la ligne en colonnes
+            if len(valeurs) >= 2:  # Vérifier qu'il y a au moins deux colonnes
+                try:
+                    x.append(float(valeurs[0]))  # Convertir en float et ajouter à x
+                    y.append(float(valeurs[1]))  # Convertir en float et ajouter à y
+                except ValueError:
+                    print(f"Erreur : Ligne ignorée à cause de valeurs non numériques -> {ligne}")
+    
 
     # Convert to numpy arrays and apply coefficients
     x = np.array(x)+add_x
@@ -155,3 +154,30 @@ def lecture_starccm_single(filename, add_x1, factor_x1, add_y1, factor_y1):
     y1_adim = y1 * factor_y1
 
     return x1, y1, x1_adim, y1_adim
+
+
+def lire_donnees(fichier):
+    """
+    Lit un fichier contenant deux colonnes de données numériques.
+    
+    :param fichier: Chemin vers le fichier à lire.
+    :return: Deux listes, x et y, contenant les valeurs des colonnes.
+    """
+    x = []
+    y = []
+    
+    with open(fichier, 'r') as f:
+        for ligne in f:
+            ligne = ligne.strip()  # Retirer les espaces ou caractères inutiles
+            if not ligne:  # Ignorer les lignes vides
+                continue
+            
+            valeurs = ligne.split()  # Diviser la ligne en colonnes
+            if len(valeurs) >= 2:  # Vérifier qu'il y a au moins deux colonnes
+                try:
+                    x.append(float(valeurs[0]))  # Convertir en float et ajouter à x
+                    y.append(float(valeurs[1]))  # Convertir en float et ajouter à y
+                except ValueError:
+                    print(f"Erreur : Ligne ignorée à cause de valeurs non numériques -> {ligne}")
+    
+    return x, y
