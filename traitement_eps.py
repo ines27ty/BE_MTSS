@@ -37,7 +37,7 @@ position_mu_eps2_adim_30, u_mean_eps2_adim_30 = sort(position_mu_eps2_adim_30, u
 
 # Inlet 3 eps 0.00004 
 position_mu_eps3_dim_10, u_mean_eps3_dim_10, position_mu_eps3_adim_10 , u_mean_eps3_adim_10 = lecture_simu('eps_0.00004_u_mean_rD_1.xy', 0.208, 1/D, 0, 1/u_bulk)
-position_mu_eps3_dim_30, u_mean_eps3_dim_30, position_mu_eps3_adim_30 , u_mean_eps3_adim_30 = lecture_simu('eps_0.00004_u_mean_rD_1.xy', 0.208, 1/D, 0, 1/u_bulk)
+position_mu_eps3_dim_30, u_mean_eps3_dim_30, position_mu_eps3_adim_30 , u_mean_eps3_adim_30 = lecture_simu('eps_0.00004_u_mean_rD_3.xy', 0.208, 1/D, 0, 1/u_bulk)
 
 position_mu_eps3_adim_10, u_mean_eps3_adim_10 = sort(position_mu_eps3_adim_10, u_mean_eps3_adim_10)
 position_mu_eps3_adim_30, u_mean_eps3_adim_30 = sort(position_mu_eps3_adim_30, u_mean_eps3_adim_30)
